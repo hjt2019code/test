@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/tx 
+    		http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	
+	<context:property-placeholder location="classpath:redis.properties" />
+
+	<!-- 数据源：redis数据库的连接池 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" >
+		<!-- 最大空闲连接 -->
+		<property name="maxIdle" value="${maxIdle}" ></property>
+		
+		<!-- 最大等待时间（需要在多久之内获取到连接） -->
+		<property name="maxWaitMillis" value="${maxWaitMillis}" ></property>
+		
+		<!-- 获取的连接是否可用 -->
+		<property name="testOnBorrow" value="${testOnBorrow}" ></property>
+	</bean>
+	
+	<!-- connectionFactory -->
+	<bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" >
+		<property name="poolConfig" ref="jedisPoolConfig" ></property>
+		<property name="port" value="${port}" ></property>
+		<property name="hostName" value="${hostName}" ></property>
+		<property name="timeout" value="${timeout}" ></property>
+	</bean>
+	
+	<bean id="rt" class="org.springframework.data.redis.core.RedisTemplate" >
+		<property name="connectionFactory" ref="connectionFactory" ></property>
+		<property name="keySerializer" >
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+		</property>
+		<!-- 序列化：可以将对象按照某种方式转换为字符串，从而方便使用流的方式对其输入和输出 -->
+		<!-- org.springframework.data.redis.serializer.StringRedisSerializer: StringRedisSerializer:只能是字符串，不进行序列化处理 -->
+		<property name="valueSerializer" >
+			<bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"></bean>
+		</property>
+	</bean>
+	
+	<!-- org.springframework.data.redis.serializer.JdkSerializationRedisSerializer -->
+	
+	
+
+
+    		
+</beans>    		
+    		
